@@ -1,0 +1,23 @@
+.title-slide {
+  width: 65%;
+  overflow: hidden;
+  position: relative;
+  left: 15%;
+}
+
+.title-slide .title-1 {
+  float: left;
+}
+
+.title-slide .title-fn, .title-slide .title-rx {
+  font-size: 115px;
+  text-align: right;
+}
+
+.title-slide .title-js {
+  float: right;
+  font-size: 250px;
+  line-height: 1.08;
+  color: rgb(19, 219, 240);
+  text-shadow: none;
+}
