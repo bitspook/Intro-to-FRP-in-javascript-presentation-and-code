@@ -191,6 +191,43 @@ We listen to the stream by `subscribing` to emitted events
 
 --
 
+## <small>another example</small>
+
+```javascript
+var sprite = document.getElementById("sprite"),
+    container = document.getElementById("sprite-container");
+
+var spriteMouseDowns = Rx.Observable.fromEvent(sprite, "mousedown"),
+    spriteContainerMouseMoves = Rx.Observable.fromEvent(container, "mousemove"),
+    spriteContainerMouseUps = Rx.Observable.fromEvent(container, "mouseup"),
+    spriteMouseDrags =
+      // For every mouse down event on the sprite...
+      spriteMouseDowns.
+      concatMap(function(contactPoint) {
+        // ...retrieve all the mouse move events on the sprite container...
+        return spriteContainerMouseMoves.
+          // ...until a mouse up event occurs.
+          takeUntil(spriteContainerMouseUps).
+          map(function(movePoint) {
+            return {
+              pageX: movePoint.pageX - contactPoint.offsetX,
+              pageY: movePoint.pageY - contactPoint.offsetY
+            };
+          });
+      });
+
+// For each mouse drag event, move the sprite to the absolute page position.
+spriteMouseDrags.forEach(function(dragPoint) {
+  sprite.style.left = dragPoint.pageX + "px";
+  sprite.style.top = dragPoint.pageY + "px";
+});
+
+```
+
+#### [Demo](../../code/rx-drag-image.html)
+
+--
+
 ## Resources
 * http://scott.sauyet.com/Javascript/Talk/FunctionalProgramming/
 * http://jhusain.github.io/learnrx/index.html
