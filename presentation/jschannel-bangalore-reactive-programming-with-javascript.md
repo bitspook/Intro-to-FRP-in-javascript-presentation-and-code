@@ -8,6 +8,11 @@ author:
   twitter: channikhabra
 
 --
+<script src="../../code/lib/tracker.js"></script>
+<script src="../../code/lib/reactive-var.js"></script>
+<script src="../../code/meteor-tracker-reactive-demo.js"></script>
+<script src="../../code/lib/bower_components/rxjs/dist/rx.all.js"></script>
+
 <div class="title-slide">
   <div class="title-1">
     <h1 class="title-fn">Functional</h1>
@@ -18,107 +23,174 @@ author:
 
 --
 
-## Functional
+## What is Reactive Programming?
 
-- Stateless Functions
-- Lazy Evaluations
-- Immutable Data Structures
-- Higher Order Functions
+...
+> Programming paradigm oriented around data flows and the propagation of change
 
 --
 
-### FP is too deep for a 20 minute FRP talk
+## What is Reactivity?
 
-For the curious
+### <small>in literal sense</small>
 
-http://scott.sauyet.com/Javascript/Talk/FunctionalProgramming/
-
---
-
-### We won't go in details of FP today
-
-#### Here are some functions we need today
+> Something happening in "reaction" to some action
 
 --
 
-### map
+### <small>in the context of</small> programming
+...
+> When some data changes `over time`, everything dependent on the changed data shall `react`
+
+--
+
+### <small>Forgotten Dimension of async code</small>
+# Time
+
+--
+### <small>A simple</small> example
+
 ```javascript
-//we have an array
-var users = ['Obama', 'Modi', 'Putin', 'Eleven Jinping'];
+var firstName = new ReactiveVar('anon');  //a well, reactive variable
+var lastName = new ReactiveVar('anon');
 
-//create new array without modifying original array
-var sillyUsers = map(users, function(user) {
-  //work with a single item at a time
-  return 'Silly' + user;
+var fullName = new ReactiveVar();
+
+Tracker.autorun(function(){
+  //reaction (aka reactive computation) that must execute
+  // whenever its dependent variables change
+  fullName.set(firstName.get() + ' ' + lastName.get());
 });
+```
 
-console.log(sillyUsers);
-//["Silly Obama", "Silly Modi", "Silly Putin", "Silly Eleven Jinping"]
+```bash
+> firstName.set('First');
+> console.log(fullName.get());
+> First anon
+
+> lastName.set('Last');
+> console.log(fullName.get());
+> First Last
 
 ```
 
 --
 
-### filter
+## <small>another example</small> Promise
 
-```javascript
-//we have an array
-var users = ['Silly Obama', 'Modi', 'Putin', 'Silly Eleven Jinping'];
+> A time dependent (`temporal`) construct which informs us when it gets its value some time in future
 
-//create new array with certain items filtered out, without modifying original array
-var sillyUsers = filter(users, function(user) {
-  //if this function returns true, the item is filtered out
-  return user.indexOf('Silly') >= 0; //user is Silly
-});
+--
 
-console.log(sillyUsers);
-//["Silly Obama", "Silly Eleven Jinping"]
+## Reactive Programming
+#### Programming Oriented around
 
+* **data flows**               :  data asynchronously flowing through the app over time
+* **propagation of change**    :  change in the data cause any dependencies to react
+
+--
+
+## Functional Reactive Programming
+...
+> A programming paradigm for reactive programming using the building blocks of functional programming
+
+--
+
+## <small>very basic</small> building blocks <small>of</small> FP
+
+* map
+  `<iterable> -> (value) -> <iterable>`
+* reduce
+  `<iterable> -> (value, acc) -> <iterable>`
+* filter
+  `<iterable> -> (value) -> <iterable>`
+* ...
+
+--
+
+```
+                        |   Imperative | Temporal   |
+                        |--------------+------------|
+                        |   Value      | Promise    |
+                        |              |            |
+                        |   Iterable   | Observable |
 ```
 
 --
 
-# Reactive
+<div class="s" style="text-align:left">
+<h3>Iterable / Array</h3>
+<ul>
+  <li>A snapshot of data</li>
+</ul>
+
+<br/>
+<br/>
+
+<h3>Observable</h3>
+<ul>
+  <li>Data set that updates and reacts as system changes over time</li>
+</ul>
+</div>
+--
+
+### Observable <small>is an asynchronous stream of data which emits </small>
+  * new data
+  * error
+  * completed signal
+
+> --a---b-c---d---X---|->
+
+...
+
+We listen to the stream by `subscribing` to emitted events
 
 --
 
-#### A Hypothetical Example
+### Observer pattern <small>on</small>
+# steroids
+
+--
+
+### <small>Any value which changes over time can be converted to an</small> Observable
+* Variable
+* User Input
+* Ajax calls
+* Events
+
+--
+
+## RXjs
+
+* Reactive extensions for JavaScript
+* Developed and maintained by Microsoft
+* Has alternatives in many languages
+  * Java, C++, C# and many more
+
+--
+
+## <small>example</small>
 
 ```javascript
-/**
- * HYPOTHETICAL Future form of Reactive Javascript
- */
+ var countButtonClicks = Rx.Observable.fromEvent(countButton, 'click'),
+     stopButtonClicks = Rx.Observable.fromEvent(stopButton, 'click');
 
-// a and b are two brothers
-var a, b;
-
-a = 10,     // a is 10 years old
-b <= a + 5;  // b is 5 years older than a
-
-//So we created a reactive dependency for b with `<=`
-//Now b updates whenever a updates
+ countButtonClicks
+ .takeUntil(stopButtonClicks)  //keep taking input from clicks on countButton
+ .forEach(function(e) {       // until stopButtonClicks recieves a value
+   state.count += 1;
+   countNode.innerHTML = state.count;
+ });
 ```
+<span id="count">0</span>
+<button id="count-btn">Count</button>
+<button id="stop-btn">Stop Counting</button>
 
----
-#### Same thing in present day javascript
 
-```javascript
-var _a, _b;
+<script src="../../code/rx-simple-count-stop-count-example.js"></script>
 
-function a() {
-  return _a;
-}
-function b() {
-  return _b;
-}
+--
 
-function setA(val) {
-  _a = 10;
-  _b = _a + 5;
-}
-function setB(val) {
-  _b = val;
-  _a = _b - 5;
-}
-
-```
+## Resources
+* http://scott.sauyet.com/Javascript/Talk/FunctionalProgramming/
+* http://jhusain.github.io/learnrx/index.html

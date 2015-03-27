@@ -1,3 +1,17 @@
+.reveal small {
+  font-size: 34px;
+  text-transform: lowercase;
+  vertical-align: middle;
+}
+
+.reveal ul {
+  font-size: 28px;
+}
+
+.reveal li {
+  padding: 10px 5px;
+}
+
 .title-slide {
   width: 65%;
   overflow: hidden;
@@ -20,4 +34,9 @@
   line-height: 1.08;
   color: rgb(19, 219, 240);
   text-shadow: none;
+}
+
+.reveal blockquote {
+  font-size: 30px;
+  font-style: normal;
 }
