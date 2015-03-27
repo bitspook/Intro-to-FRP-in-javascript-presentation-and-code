@@ -1,0 +1,32 @@
+<style>
+ body, html {
+   padding: 0;
+   margin: 0;
+ }
+
+ #sprite-container {
+   height: 100vh;
+   position: relative;
+   background: #222;
+   text-align: center
+ }
+
+ #sprite {
+   position: absolute;
+   border: none;
+   cursor: move;
+   width: 200px;
+   height: 50px;
+   top: calc(50vh - 25px);
+   left: calc(50% - 100px);
+   background: url(sprites/jslogo.png) no-repeat;
+   background-size: contain;
+ }
+</style>
+
+<div id="sprite-container">
+  <span id="sprite"></span>
+</div>
+
+<script src="lib/bower_components/rxjs/dist/rx.all.js"></script>
+<script src="rx-drag-image-example.js"></script>
