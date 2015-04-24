@@ -3,8 +3,7 @@ output: dist/jschannel-bangalore-introduction-to-reactive-programming-with-javas
 <!-- theme: sudodoki/reveal-cleaver-theme -->
 theme: ~/Documents/Work/reference/Design/Cleaver-Themes/reveal-cleaver-theme
 style: custom-styles.css
-author:
-name: Thanks
+author: Charanjit Singh
 twitter: channikhabra
 
 --
@@ -41,7 +40,7 @@ twitter: channikhabra
 
 ### <small>in the context of</small> programming
 ...
-> When some data changes `over time`, everything dependent on the changed data shall `react`
+> When something changes `over time`, everything dependent on the change shall `react`
 
 --
 
@@ -58,9 +57,8 @@ var lastName = new ReactiveVar('anon');
 var fullName = new ReactiveVar();
 
 Tracker.autorun(function(){
-//reaction (aka reactive computation) that must execute
-// whenever its dependent variables change
-fullName.set(firstName.get() + ' ' + lastName.get());
+  //the reaction (aka Reactive Computation)
+  fullName.set(firstName.get() + ' ' + lastName.get());
 });
 ```
 
@@ -212,6 +210,25 @@ fullName.set(firstName.get() + ' ' + lastName.get());
 
 --
 
+  <table>
+      <tr>
+          <th style="text-shadow:none; text-align: center;">Iterable</th>
+          <th style="text-shadow:none; text-align: center;">Observable</th>
+      </tr>
+      <tr><td><pre><code>getDataFromLocalMemory()
+  .filter (s =&gt; s != null)
+  .map(s =&gt; s + 'transformed')
+  .forEach(s =&gt; console.log('next =&gt; %s', it))</code></pre></td>
+          <td><pre><code>getDataFromNetwork()
+  .filter (s =&gt; s != null)
+  .map(s =&gt; s + 'transformed')
+  .subscribe(s =&gt; console.log('next =&gt; %s', it))</code></pre></td>
+      </tr>
+
+  </table>
+
+--
+
   ## <small>example</small>
 
   ```javascript
@@ -219,11 +236,11 @@ fullName.set(firstName.get() + ' ' + lastName.get());
   stopButtonClicks = Rx.Observable.fromEvent(stopButton, 'click');
 
   countButtonClicks
-  .takeUntil(stopButtonClicks)  //keep taking input from clicks on countButton
-  .forEach(function(e) {       // until stopButtonClicks recieves a value
-  state.count += 1;
-  countNode.innerHTML = state.count;
-  });
+    .takeUntil(stopButtonClicks)  //keep taking input from clicks on countButton
+    .forEach(function(e) {       // until stopButtonClicks recieves a value
+       state.count += 1;
+       countNode.innerHTML = state.count;
+    });
   ```
   <span id="count">0</span>
   <button id="count-btn">Count</button>
@@ -234,36 +251,59 @@ fullName.set(firstName.get() + ' ' + lastName.get());
 
 --
 
+  ## <small>little bigger example</small>
+
+  ```javascript
+  var input = document.getElementById('input');
+  var dictionarySuggest = Rx.Observable.fromEvent(input, 'keyup')
+    .map(function () { return input.value; })
+    .filter(function (text) { return !!text; })
+    .distinctUntilChanged()
+    .throttle(250)
+    .flatMapLatest(searchWikipedia)
+    .subscribe(
+      function (results) {
+        list = [];
+        list.concat(results.map(createItem));
+      },
+      function (err) {
+        logError(err);
+      }
+    );
+  ```
+
+--
   ## <small>another example</small>
 
   ```javascript
-  var sprite = document.getElementById("sprite"),
-  container = document.getElementById("sprite-container");
+var sprite = document.getElementById("sprite"),
+    container = document.getElementById("sprite-container");
 
-  var spriteMouseDowns = Rx.Observable.fromEvent(sprite, "mousedown"),
-  spriteContainerMouseMoves = Rx.Observable.fromEvent(container, "mousemove"),
-  spriteContainerMouseUps = Rx.Observable.fromEvent(container, "mouseup"),
-  spriteMouseDrags =
-  // For every mouse down event on the sprite...
-  spriteMouseDowns.
-  concatMap(function(contactPoint) {
-  // ...retrieve all the mouse move events on the sprite container...
-  return spriteContainerMouseMoves.
-  // ...until a mouse up event occurs.
-  takeUntil(spriteContainerMouseUps).
-  map(function(movePoint) {
-  return {
-  pageX: movePoint.pageX - contactPoint.offsetX,
-  pageY: movePoint.pageY - contactPoint.offsetY
-  };
-  });
-  });
+var spriteMouseDowns = Rx.Observable.fromEvent(sprite, "mousedown"),
+    spriteContainerMouseMoves = Rx.Observable.fromEvent(container, "mousemove"),
+    spriteContainerMouseUps = Rx.Observable.fromEvent(container, "mouseup");
 
-  // For each mouse drag event, move the sprite to the absolute page position.
-  spriteMouseDrags.forEach(function(dragPoint) {
+var spriteMouseDrags =
+    // For every mouse down event on the sprite...
+    spriteMouseDowns.
+      concatMap(function(contactPoint) {
+        // ...retrieve all the mouse move events on the sprite container...
+        return spriteContainerMouseMoves.
+          // ...until a mouse up event occurs.
+          takeUntil(spriteContainerMouseUps).
+          map(function(movePoint) {
+            return {
+              pageX: movePoint.pageX - contactPoint.offsetX,
+              pageY: movePoint.pageY - contactPoint.offsetY
+            };
+          });
+    });
+
+// For each mouse drag event, move the sprite to the absolute page position.
+spriteMouseDrags.forEach(function(dragPoint) {
   sprite.style.left = dragPoint.pageX + "px";
   sprite.style.top = dragPoint.pageY + "px";
-  });
+});
 
   ```
 
@@ -275,3 +315,4 @@ fullName.set(firstName.get() + ' ' + lastName.get());
   * http://scott.sauyet.com/Javascript/Talk/FunctionalProgramming/
   * http://jhusain.github.io/learnrx/index.html
   * https://github.com/Reactive-Extensions/RxJS
+  * https://pozadi.github.io/kefir/
