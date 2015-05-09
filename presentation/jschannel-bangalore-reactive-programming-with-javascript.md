@@ -8,11 +8,11 @@ twitter: channikhabra
 
 --
 
-<script src="/code/lib/tracker.js"></script>
-<script src="/code/lib/reactive-var.js"></script>
-<script src="/code/meteor-tracker-reactive-demo.js"></script>
-<script src="/code/lib/bower_components/rxjs/dist/rx.all.js"></script>
-<script src="/code/lib/bower_components/ramda/dist/ramda.js"></script>
+<script src="https://cdn.rawgit.com/channikhabra/Intro-to-FRP-in-javascript-presentation-and-code/master/code/lib/tracker.js"></script>
+<script src="https://cdn.rawgit.com/channikhabra/Intro-to-FRP-in-javascript-presentation-and-code/master/code/lib/reactive-var.js"></script>
+<script src="https://cdn.rawgit.com/channikhabra/Intro-to-FRP-in-javascript-presentation-and-code/master/code/meteor-tracker-reactive-demo.js"></script>
+<script src="https://cdn.rawgit.com/channikhabra/Intro-to-FRP-in-javascript-presentation-and-code/master/code/lib/bower_components/rxjs/dist/rx.all.js"></script>
+<script src="https://cdn.rawgit.com/channikhabra/Intro-to-FRP-in-javascript-presentation-and-code/master/code/lib/bower_components/ramda/dist/ramda.js"></script>
 
 <div class="title-slide">
   <div class="title-1">
@@ -248,7 +248,7 @@ Tracker.autorun(function(){
   <button id="stop-btn">Stop Counting</button>
 
 
-  <script src="/code/rx-simple-count-stop-count-example.js"></script>
+  <script src="https://cdn.rawgit.com/channikhabra/Intro-to-FRP-in-javascript-presentation-and-code/master/code/rx-simple-count-stop-count-example.js"></script>
 
 --
 
