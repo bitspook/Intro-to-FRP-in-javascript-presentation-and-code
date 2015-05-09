@@ -1,11 +1,12 @@
 <!doctype html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-  <title>Functional Reactive Programming with Javascript</title>
-  <style type="text/css">
-    @charset "UTF-8";/*!
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="icon" type="image/x-icon" href="/favicon.png">
+    <title>Functional Reactive Programming with Javascript</title>
+    <style type="text/css">
+     @charset "UTF-8";/*!
  * reveal.js
  * http://lab.hakim.se/reveal-js
  * MIT licensed
@@ -386,16 +387,19 @@ code {
   font-size: 30px;
   font-style: normal;
 }
-  </style>
-</head>
-<body>
-<div class="reveal">
-    <div class="slides">
-        <section>
-    <script src="code/lib/tracker.js"></script>
-<script src="code/lib/reactive-var.js"></script>
-<script src="code/meteor-tracker-reactive-demo.js"></script>
-<script src="code/lib/bower_components/rxjs/dist/rx.all.js"></script>
+    </style>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+          <section>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+
+<script src="/code/lib/tracker.js"></script>
+<script src="/code/lib/reactive-var.js"></script>
+<script src="/code/meteor-tracker-reactive-demo.js"></script>
+<script src="/code/lib/bower_components/rxjs/dist/rx.all.js"></script>
+<script src="/code/lib/bower_components/ramda/dist/ramda.js"></script>
 
 <div class="title-slide">
   <div class="title-1">
@@ -425,7 +429,7 @@ code {
     <h3 id="-small-in-the-context-of-small-programming"><small>in the context of</small> programming</h3>
 <p>...</p>
 <blockquote>
-<p>When some data changes <code>over time</code>, everything dependent on the changed data shall <code>react</code></p>
+<p>When something changes <code>over time</code>, everything dependent on the change shall <code>react</code></p>
 </blockquote>
 
   </section>
@@ -442,8 +446,7 @@ code {
 <span class="keyword">var</span> fullName = <span class="keyword">new</span> ReactiveVar();
 
 Tracker.autorun(<span class="keyword">function</span>(){
-  <span class="comment">//reaction (aka reactive computation) that must execute</span>
-  <span class="comment">// whenever its dependent variables change</span>
+  <span class="comment">//the reaction (aka Reactive Computation)</span>
   fullName.set(firstName.get() + <span class="string">' '</span> + lastName.get());
 });</code></pre>
 <pre><code class="lang-bash">&gt; firstName.<span class="keyword">set</span>(<span class="string">'First'</span>);
@@ -485,7 +488,7 @@ Tracker.autorun(<span class="keyword">function</span>(){
 <li>map
 <code>&lt;iterable&gt; -&gt; (value) -&gt; &lt;iterable&gt;</code></li>
 <li>reduce
-<code>&lt;iterable&gt; -&gt; (value, acc) -&gt; &lt;iterable&gt;</code></li>
+<code>&lt;iterable&gt; -&gt; (acc, value) -&gt; &lt;iterable&gt;</code></li>
 <li>filter
 <code>&lt;iterable&gt; -&gt; (value) -&gt; &lt;iterable&gt;</code></li>
 <li>...</li>
@@ -493,41 +496,81 @@ Tracker.autorun(<span class="keyword">function</span>(){
 
   </section>
   <section>
-    <pre><code>                        |   Imperative | Temporal   |
-                        |--------------+------------|
-                        |   Value      | Promise    |
-                        |              |            |
-                        |   Iterable   | Observable |</code></pre>
+    <h2 id="fp-small-is-small-beautiful">FP <small>is</small> Beautiful</h2>
+  <script>
+   var sanitizeJson = R.pipe(R.split('\n'),
+                             R.map(R.trim),
+                             R.filter(R.strIndexOf('//')),
+                             R.join('\n'));
+   var invalidJSON = '{' + '\n' +
+         "// Some comment in JSON" + '\n' +
+         ' "servers": [' + '\n' +
+         '{' + '\n' +
+         '"host": "hostname",' + '\n' +
+         '"username": "root",'+ '\n' +
+         '"password": "password"' + '\n' +
+         '}' + '\n' +
+         '],' + '\n' +
+         '"setupMongo": true,'+ '\n' +
+         '"setupNode": true,' + '\n' +
+         '"nodeVersion": "0.10.36",'+ '\n' +
+         '"setupPhantom": true,' + '\n' +
+         '"appName": "meteor",'+ '\n' +
+         '"app": "/path/to/the/app",' + '\n' +
+         '  "env": {'+ '\n' +
+         '"ROOT_URL": "http://myapp.com"' + '\n' +
+         '   },'+ '\n' +
+         '"deployCheckWaitTime": 150' + '\n' +
+         '}'
+  </script>
+
+<h4 id="-small-eg-small-composibility-"><small>eg</small> <strong>Composibility</strong></h4>
+<pre><code class="lang-javascript">  <span class="comment">/* generate a function which takes a json file's content
+     and remove all JS comments from it
+  */</span>
+  <span class="keyword">var</span> sanitizeJson = R.pipe(R.split(<span class="string">'\n'</span>),
+                            R.map(R.trim),
+                            R.filter(R.strIndexOf(<span class="string">'//'</span>)),
+                            R.join(<span class="string">'\n'</span>));</code></pre>
+
+  </section>
+  <section>
+    <pre><code>                          |   Imperative | Temporal   |
+                          |--------------+------------|
+                          |   Value      | Promise    |
+                          |              |            |
+                          |   Iterable   | Observable |</code></pre>
 
   </section>
   <section>
     <div class="s" style="text-align:left">
-<h3>Iterable / Array</h3>
-<ul>
-  <li>A snapshot of data</li>
-</ul>
+    <h3>Iterable / Array</h3>
+    <ul>
+      <li>A snapshot of data</li>
+    </ul>
 
-<br/>
-<br/>
+    <br/>
+    <br/>
 
-<h3>Observable</h3>
-<ul>
-  <li>Data set that updates and reacts as system changes over time</li>
-</ul>
-</div>
+    <h3>Observable</h3>
+    <ul>
+      <li>Data set that updates and reacts as system changes over time</li>
+    </ul>
+  </div>
   </section>
   <section>
     <h3 id="observable-small-is-an-asynchronous-stream-of-data-which-emits-small-">Observable <small>is an asynchronous stream of data which emits </small></h3>
 <ul>
 <li>new data</li>
 <li>error</li>
-<li>completed signal</li>
-</ul>
+<li><p>completed signal</p>
 <blockquote>
 <p>--a---b-c---d---X---|-&gt;</p>
 </blockquote>
 <p>...</p>
 <p>We listen to the stream by <code>subscribing</code> to emitted events</p>
+</li>
+</ul>
 
   </section>
   <section>
@@ -550,30 +593,64 @@ Tracker.autorun(<span class="keyword">function</span>(){
 <ul>
 <li>Reactive extensions for JavaScript</li>
 <li>Developed and maintained by Microsoft</li>
-<li>Has alternatives in many languages<ul>
+<li>Has alternatives in many languages</li>
 <li>Java, C++, C# and many more</li>
-</ul>
-</li>
 </ul>
 
   </section>
   <section>
+    <table>
+      <tr>
+          <th style="text-shadow:none; text-align: center;">Iterable</th>
+          <th style="text-shadow:none; text-align: center;">Observable</th>
+      </tr>
+      <tr><td><pre><code>getDataFromLocalMemory()
+  .filter (s =&gt; s != null)
+  .map(s =&gt; s + &#39;transformed&#39;)
+  .forEach(s =&gt; console.log(&#39;next =&gt; %s&#39;, it))</code></pre></td>
+          <td><pre><code>getDataFromNetwork()
+  .filter (s =&gt; s != null)
+  .map(s =&gt; s + &#39;transformed&#39;)
+  .subscribe(s =&gt; console.log(&#39;next =&gt; %s&#39;, it))</code></pre></td>
+      </tr>
+
+  </table>
+  </section>
+  <section>
     <h2 id="-small-example-small-"><small>example</small></h2>
-<pre><code class="lang-javascript"> <span class="keyword">var</span> countButtonClicks = Rx.Observable.fromEvent(countButton, <span class="string">'click'</span>),
-     stopButtonClicks = Rx.Observable.fromEvent(stopButton, <span class="string">'click'</span>);
+<pre><code class="lang-javascript">  <span class="keyword">var</span> countButtonClicks = Rx.Observable.fromEvent(countButton, <span class="string">'click'</span>),
+  stopButtonClicks = Rx.Observable.fromEvent(stopButton, <span class="string">'click'</span>);
 
- countButtonClicks
- .takeUntil(stopButtonClicks)  <span class="comment">//keep taking input from clicks on countButton</span>
- .forEach(<span class="keyword">function</span>(e) {       <span class="comment">// until stopButtonClicks recieves a value</span>
-   state.count += <span class="number">1</span>;
-   countNode.innerHTML = state.count;
- });</code></pre>
-<p><span id="count">0</span></p>
-<button id="count-btn">Count</button>
-<button id="stop-btn">Stop Counting</button>
+  countButtonClicks
+    .takeUntil(stopButtonClicks)  <span class="comment">//keep taking input from clicks on countButton</span>
+    .forEach(<span class="keyword">function</span>(e) {       <span class="comment">// until stopButtonClicks recieves a value</span>
+       state.count += <span class="number">1</span>;
+       countNode.innerHTML = state.count;
+    });</code></pre>
+<p>  <span id="count">0</span>
+  <button id="count-btn">Count</button>
+  <button id="stop-btn">Stop Counting</button></p>
+  <script src="/code/rx-simple-count-stop-count-example.js"></script>
+  </section>
+  <section>
+    <h2 id="-small-little-bigger-example-small-"><small>little bigger example</small></h2>
+<pre><code class="lang-javascript">  <span class="keyword">var</span> input = document.getElementById(<span class="string">'input'</span>);
+  <span class="keyword">var</span> dictionarySuggest = Rx.Observable.fromEvent(input, <span class="string">'keyup'</span>)
+    .map(<span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span> <span class="keyword">return</span> input.value; })
+    .filter(<span class="function"><span class="keyword">function</span> <span class="params">(text)</span> {</span> <span class="keyword">return</span> !!text; })
+    .distinctUntilChanged()
+    .throttle(<span class="number">250</span>)
+    .flatMapLatest(searchWikipedia)
+    .subscribe(
+      <span class="function"><span class="keyword">function</span> <span class="params">(results)</span> {</span>
+        list = [];
+        list.concat(results.map(createItem));
+      },
+      <span class="function"><span class="keyword">function</span> <span class="params">(err)</span> {</span>
+        logError(err);
+      }
+    );</code></pre>
 
-
-<script src="code/rx-simple-count-stop-count-example.js"></script>
   </section>
   <section>
     <h2 id="-small-another-example-small-"><small>another example</small></h2>
@@ -582,10 +659,11 @@ Tracker.autorun(<span class="keyword">function</span>(){
 
 <span class="keyword">var</span> spriteMouseDowns = Rx.Observable.fromEvent(sprite, <span class="string">"mousedown"</span>),
     spriteContainerMouseMoves = Rx.Observable.fromEvent(container, <span class="string">"mousemove"</span>),
-    spriteContainerMouseUps = Rx.Observable.fromEvent(container, <span class="string">"mouseup"</span>),
-    spriteMouseDrags =
-      <span class="comment">// For every mouse down event on the sprite...</span>
-      spriteMouseDowns.
+    spriteContainerMouseUps = Rx.Observable.fromEvent(container, <span class="string">"mouseup"</span>);
+
+<span class="keyword">var</span> spriteMouseDrags =
+    <span class="comment">// For every mouse down event on the sprite...</span>
+    spriteMouseDowns.
       concatMap(<span class="keyword">function</span>(contactPoint) {
         <span class="comment">// ...retrieve all the mouse move events on the sprite container...</span>
         <span class="keyword">return</span> spriteContainerMouseMoves.
@@ -597,14 +675,14 @@ Tracker.autorun(<span class="keyword">function</span>(){
               pageY: movePoint.pageY - contactPoint.offsetY
             };
           });
-      });
+    });
 
 <span class="comment">// For each mouse drag event, move the sprite to the absolute page position.</span>
 spriteMouseDrags.forEach(<span class="keyword">function</span>(dragPoint) {
   sprite.style.left = dragPoint.pageX + <span class="string">"px"</span>;
   sprite.style.top = dragPoint.pageY + <span class="string">"px"</span>;
 });</code></pre>
-<h4 id="-demo-code-rx-drag-image-html-"><a href="code/rx-drag-image.html">Demo</a></h4>
+<h4 id="-demo-code-rx-drag-image-html-"><a href="/code/rx-drag-image.html">Demo</a></h4>
 
   </section>
   <section>
@@ -612,23 +690,22 @@ spriteMouseDrags.forEach(<span class="keyword">function</span>(dragPoint) {
 <ul>
 <li><a href="http://scott.sauyet.com/Javascript/Talk/FunctionalProgramming/">http://scott.sauyet.com/Javascript/Talk/FunctionalProgramming/</a></li>
 <li><a href="http://jhusain.github.io/learnrx/index.html">http://jhusain.github.io/learnrx/index.html</a></li>
+<li><a href="https://github.com/Reactive-Extensions/RxJS">https://github.com/Reactive-Extensions/RxJS</a></li>
+<li><a href="https://pozadi.github.io/kefir/">https://pozadi.github.io/kefir/</a></li>
 </ul>
 
   </section>
   <section>
     <div class="author">
-  <h1 class="name">Thanks</h1>
-    <h3 class="twitter">
-      <a href="http://twitter.com/@channikhabra">@channikhabra</a>
-    </h3>
+  <h1 class="name"></h1>
 </div>
 
   </section>
 
+      </div>
     </div>
-</div>
-<script>
-    /*!
+    <script>
+     /*!
  * reveal.js 2.4.0 (2013-04-29, 22:06)
  * http://lab.hakim.se/reveal-js
  * MIT licensed
@@ -643,6 +720,6 @@ var Reveal=function(){"use strict";function e(e){return Mt||kt?(window.addEventL
         theme: 'default',
         transition: 'default'
     })
-</script>
-</body>
+    </script>
+  </body>
 </html>
