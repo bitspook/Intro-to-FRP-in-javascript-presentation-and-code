@@ -7,7 +7,6 @@ author: Charanjit Singh
 twitter: channikhabra
 
 --
-<link rel="icon" type="image/x-icon" href="/favicon.ico">
 
 <script src="/code/lib/tracker.js"></script>
 <script src="/code/lib/reactive-var.js"></script>
